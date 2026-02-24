@@ -13,7 +13,7 @@ window.addEventListener("load", createLightbox);
 
 function createLightbox() {
    //Lightbox Container
-   let lightBox = document.getElementById("Lightbox");
+   let lightBox = document.getElementById("lightbox");
 
    //Parts of the lightbox
    let lbTitle = document.createElement("h1");
@@ -31,28 +31,43 @@ function createLightbox() {
    
    //Design the lightbox slide counter
    lightBox.appendChild(lbCounter);
-   lbTitle.id = "lbCounter";
+   lbCounter.id = "lbCounter";
    let currentImg = 1;
    lbCounter.textContent = currentImg + " / " + imgCount;
    
    //Design the lightbox previous slide button
    lightBox.appendChild(lbPrev);
-   lbTitle.id = "lbPrev";
+   lbPrev.id = "lbPrev";
    lbPrev.innerHTML = "&#9664;";
+   lbPrev.onclick = showPrev;
    
    //Design the lightbox next slide button
    lightBox.appendChild(lbNext);
-   lbTitle.id = "lbNext";
+   lbNext.id = "lbNext";
    lbNext.innerHTML = "&#9654;";
+   lbNext.onclick = showNext;
 
    //Design the lightbox Play-Pause button
    lightBox.appendChild(lbPlay);
-   lbTitle.id = "lbPlay";
+   lbPlay.id = "lbPlay";
    lbPlay.innerHTML = "&#9199;";
+   let timeID;
+   lbPlay.onclick = function() {
+      if (timeID) {
+         //Stop the slideshow
+         window.clearInterval(timeID);
+         timeID = undefined;
+
+      } else {
+         //Start the slideshow
+         showNext();
+         timeID = window.setInterval(showNext, 1500);
+      }
+   }
 
    //Design the lightbox images container
    lightBox.appendChild(lbImages);
-   lbTitle.id = "lbImages";
+   lbImages.id = "lbImages";
    
    //Add images from the imgFiles array to the container
    for (let i = 0; i < imgCount; i++) {
@@ -61,11 +76,24 @@ function createLightbox() {
       image.alt = imgCaptions[i];
       lbImages.appendChild(image);
    }
+
+   //Function to move forward through the image list
+   function showNext() {
+      lbImages.appendChild(lbImages.firstElementChild);
+      (currentImg < imgCount) ? currentImg++ : currentImg = 1;
+      lbCounter.textContent = currentImg + " / " + imgCount;
+   }
+
+   function showPrev() {
+      lbImages.insertBefore(lbImages.lastElementChild, lbImages.firstElementChild);
+      (currentImg > 1) ? currentImg-- : currentImg = imgCount;
+      lbCounter.textContent = currentImg + " / " + imgCount;
+   }
 }
 
 
 
-window.addEventListener("load", setupGallery);
+// window.addEventListener("load", setupGallery);
 
 function setupGallery() {
    let imageCount = imgFiles.length;
